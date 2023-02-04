@@ -29,7 +29,9 @@ protected:
 // ---------------------------------------------------------------------------------------------------
 class Line : public DrawableObj {
 public:
-	Line() : DrawableObj(LineT) {};
+    Line() : DrawableObj(LineT),
+        x0(0), y0(0), x1(0), y1(0), oldx(0), m_color(0) 
+    {}
     Line (int16_t x0, int16_t y0, int16_t x1, int16_t y1, unsigned char z, uint16_t color);
     void SetLine (int16_t x0, int16_t y0, int16_t x1, int16_t y1, unsigned char z, uint16_t color);
     void RenderLine (uint16_t actualLine, uint16_t * colorBuffer, uint16_t * deepBuffer);
@@ -54,7 +56,7 @@ public:
     uint16_t color;
 };
 // ---------------------------------------------------------------------------------------------------
-class TriangleTex : public DrawableObj {
+/*class TriangleTex : public DrawableObj {
 public:
     TriangleTex (int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2, int16_t y2, char z, uint16_t color);
     TriangleTex (int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2, int16_t y2,
@@ -68,7 +70,7 @@ public:
     Point t0, t1, t2;
     char z;
     uint16_t color;
-};
+};*/
 
 // ---------------------------------------------------------------------------------------------------
 class FilledTriangle : public DrawableObj {

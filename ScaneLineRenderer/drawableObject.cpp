@@ -8,17 +8,16 @@
 #include <math.h>
 #endif
 
+#ifndef ONPC
 #include <Arduino.h>
+#else
+#define pgm_read_byte(addr) (*(const unsigned char *)(addr))
+#endif
 
 #include "fixpoint.h"
 
 #define swap(a, b, T)  { T t = a; a = b; b = t; }
 
-#define ONPC
-
-#ifdef ONPC
-#define pgm_read_byte(addr) (*(const unsigned char *)(addr))
-#endif
 
 DrawableObj::DrawableObj(ObjectType type)
 {
@@ -170,8 +169,8 @@ void Triangle::RenderLine(uint16_t actualLine, uint16_t *colorBuffer, uint16_t *
     if (actualLine >= y0 && actualLine < y1) {   
         int actualYStep = actualLine - y0;
 
-        fixedp  dx01 = x1 - x0,
-                dy01 = y1 - y0;
+        float  dx01 = x1 - x0,
+               dy01 = y1 - y0;
 
         int a = x0, b =x0;
         if (dy01 != 0) a = x0 +  dx01/dy01 * actualYStep;
@@ -189,7 +188,7 @@ void Triangle::RenderLine(uint16_t actualLine, uint16_t *colorBuffer, uint16_t *
     } else
     // triangle lower part
     {
-        fixedp dx12 = x2 - x1,
+        float dx12 = x2 - x1,
                dy12 = y2 - y1;
 
         int a =x0, b = x1;
@@ -208,10 +207,9 @@ void Triangle::RenderLine(uint16_t actualLine, uint16_t *colorBuffer, uint16_t *
         for ( ; a < b; a++) {
             colorBuffer[a] = color;
         }
-
     }
 }
-
+/*
 TriangleTex::TriangleTex(int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2, int16_t y2, char z, uint16_t color) : DrawableObj(TriangleT)
 {
      // Sort coordinates by Y order (y2 >= y1 >= y0)
@@ -287,6 +285,7 @@ void TriangleTex::SetValue(int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16
 
 }
 
+
 void TriangleTex::RenderLine(uint16_t actualLine, uint16_t *colorBuffer, uint16_t *deepBuffer)
 {
     if (actualLine < y0 || actualLine > y2) return;
@@ -301,7 +300,7 @@ void TriangleTex::RenderLine(uint16_t actualLine, uint16_t *colorBuffer, uint16_
 
     /* if(y1 == y2) last = y1;   // Include y1 scanline
         else         last = y1-1; // Skip it*/
-
+/*
     // triangle upper part
     if (actualLine >= y0 && actualLine < y1) {
         int actualYStep = actualLine - y0;
@@ -392,6 +391,7 @@ void TriangleTex::RenderLine(uint16_t actualLine, uint16_t *colorBuffer, uint16_
 
     }
 }
+*/
 
 // -- Rectangle --------------------------------------------------------------------------------
 Rectangle::Rectangle(int16_t x1, int16_t y1, int16_t w1, int16_t h1,
@@ -678,7 +678,6 @@ void Text::DrawCharLine(int16_t sx, int16_t line, uint16_t * colorBuffer, char c
     }
 }
 
-
 void Text::RenderLine(uint16_t actualLine, uint16_t * colorBuffer, uint16_t */* deepBuffer*/)
 {
     if (actualLine < y || actualLine > (y + 7 * size)) return;
@@ -786,7 +785,6 @@ uint16_t GetTextPixel (Point & point, char * text) {
     return 0;
 }
 
-
 bool  RotatedText::Calcualte (int16_t x, int16_t y, Point & vector, Point & textPoint) {
     // it could be optimized, as a simple vector addition
     int xx = (x * vector.x - y *vector.y) / 100;
@@ -838,13 +836,10 @@ void Slice::SetValue(int16_t x, int16_t y, int16_t r, int16_t start, int16_t sto
     this->origo.y = y;
     this->r = r;
 
-
     this->start = start < 0 ? start +360 : start %360;
     this->stop =stop < 0 ? stop +360 : stop %360;
     this->z =z;
     this->color = color;
-
-    
 }
 
 void Slice::RenderLine(uint16_t actualLine, uint16_t *colorBuffer, uint16_t *deepBuffer)
